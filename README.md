@@ -1,12 +1,12 @@
-# HPC Assignment: Code Optimization & Profiling (Chapter 2)
+# HPC Assignment - Chapter 2 Profiling
 
-This guide provides step-by-step instructions to reproduce the profiling case studies from **Chapter 2 (Sections 2.1 & 2.2)** of the "High Performance Computing" course.
+This repository contains the scripts and instructions needed to reproduce the profiling case studies from Chapter 2 of the High Performance Computing course.
 
-**Objective:** Profile Python code to identify I/O bottlenecks (Section 2.1) and CPU bottlenecks (Section 2.2).
+**Objective:** Generate three pieces of evidence (screenshots) demonstrating I/O and CPU profiling.
 
 ## 📋 Prerequisites
 
-Open your terminal or command prompt and install the required tools:
+Before starting, install the required Python libraries by running this command in your terminal:
 
 ```bash
 pip install snakeviz line_profiler requests
@@ -14,84 +14,93 @@ pip install snakeviz line_profiler requests
 
 ---
 
-## Part 1: I/O Profiling (Section 2.1)
+## 🚀 Part 1: I/O Profiling (Section 2.1)
 
-In this section, we will analyze `load.py` to identify excessive Input/Output operations.
+In this part, we analyze network latency using `load.py`.
 
-### 1. Run the Profiler
+### Step 1: Run the Profiler
 
-Run the standard Python profiler (`cProfile`) on the data loading script. We will request data for a specific station over a year range.
-
-```bash
-# Syntax: python -m cProfile -o <output_file> load.py <stations> <year_range>
-python -m cProfile -o load.prof load.py "ABC" 2022-2023
-```
-
-_(Note: Replace `"ABC"` with a valid station ID from `locations.csv` if needed)_
-
-### 2. Visualize with SnakeViz
-
-Launch the interactive visualizer to see where the time is being spent.
+Run the following command. This will execute the script and save the profiling data to a text file named `profile.txt`.
 
 ```bash
-snakeviz load.prof
+# Note: This may take 1-2 minutes to run.
+python -m cProfile -s cumulative load.py 01044099999 2021-2021 > profile.txt
 ```
 
-Look for large blocks in the visualization. You should see time dominated by network requests (e.g., `socket.read` or `recv`), clearly indicating an I/O bottleneck.
+### 📸 Evidence Checkpoint 1
+
+1. Open the generated `profile.txt` file.
+2. Look at the top 10-20 lines. You should see a total run time of approximately **129 seconds**.
+3. **Action:** Take a screenshot of these top lines.
+4. **Save using specific filename (if required) or add to your report.**
 
 ---
 
-## Part 2: CPU Profiling (Section 2.2)
+## 💻 Part 2: CPU Profiling (Section 2.2)
 
-In this section, we will analyze `distance_cache.py`, which computes distances between coordinates.
+In this part, we analyze the CPU-intensive `distance_cache.py` script.
 
-### ⚠️ IMPORTANT: Before You Start
+### Method A: Line Profiler (Detailed Table)
 
-Open `distance_cache.py` and ensure the `@profile` decorator is **COMMENTED OUT** or **DELETED**.
+**Requirement:** Ensure the `@profile` decorator is present in `distance_cache.py` (it usually is by default).
+
+### Step 2: Run Kernprof
+
+Run the special line profiler command:
+
+```bash
+kernprof -l -v distance_cache.py
+```
+
+### 📸 Evidence Checkpoint 2
+
+1. After the command finishes, a table will be printed in your terminal.
+2. Look for the **% Time** column showing high usage on the mathematical operations within `get_distance`.
+3. **Action:** Take a screenshot of this table in your terminal.
+
+---
+
+### Method B: SnakeViz (Visual Chart)
+
+### ⚠️ CRITICAL WARNING: Before You Proceed
+
+**You MUST open `distance_cache.py` and delete (or comment out) the `@profile` decorator.**
+
+If you do not remove `@profile`, the next command will fail with a `NameError`.
 
 ```python
 # distance_cache.py
-# @profile  <-- MUST BE COMMENTED OUT for Step 1
+
+# @profile  <-- DELETE THIS LINE OR ADD A #
 def get_distance(p1, p2):
     ...
 ```
 
-_If you leave `@profile` enabled, the standard profiler in Step 1 will crash!_
+### Step 3: Run Standard Profiler
 
-### Step 1: Broad Profiling with SnakeViz
+Once the decorator is removed, run:
 
-First, we get a high-level view of the performance.
+```bash
+python -m cProfile -o distance_cache.prof distance_cache.py
+```
 
-1.  **Run cProfile:**
+### Step 4: Launch SnakeViz
 
-    ```bash
-    python -m cProfile -o distance_cache.prof distance_cache.py
-    ```
+Visualize the results:
 
-2.  **Visualize:**
-    ```bash
-    snakeviz distance_cache.prof
-    ```
-    _Observation:_ You will likely see that the `get_distance` function consumes the majority of the execution time.
+```bash
+snakeviz distance_cache.prof
+```
 
-### Step 2: Line-by-Line Profiling
+### 📸 Evidence Checkpoint 3
 
-Now that we know `get_distance` is the culprit, we need to inspect it line-by-line using `line_profiler`.
+1. A browser window will open showing a colorful "Icicle" chart.
+2. **Action:** Take a screenshot of this chart.
 
-1.  **Enable the Decorator:**
-    Open `distance_cache.py` and **uncomment** (or add) the `@profile` decorator above the `get_distance` function.
+---
 
-    ```python
-    @profile  # <-- UNCOMMENT THIS NOW
-    def get_distance(p1, p2):
-        ...
-    ```
+## ✅ Checklist
 
-2.  **Run Line Profiler:**
-    Use `kernprof` (part of the `line_profiler` package) to run the script.
-
-    ```bash
-    kernprof -l -v distance_cache.py
-    ```
-
-    _Result:_ The terminal will display a table showing exactly how much time each line of code took to execute, helping you pinpoint the inefficient mathematical operations.
+- [ ] Evidence 1: `profile.txt` screenshot (~129s).
+- [ ] Evidence 2: `kernprof` terminal output.
+- [ ] Evidence 3: SnakeViz chart (after removing `@profile`).
