@@ -50,7 +50,7 @@ def visualize(simulator):
         line.set_data(X,Y)
         return line, 
 
-    anim = animation.FuncAnimation(fig, animate, init_func=init, frames=200, interval=10, blit=True)
+    anim = animation.FuncAnimation(fig, animate, init_func=init, interval=10, blit=True)
     plt.show()
 
                     
