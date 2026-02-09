@@ -17,6 +17,8 @@ Open your terminal (**PowerShell** on Windows, **Terminal** on macOS) in the **`
 pip install pytest pytest-benchmark line_profiler memory_profiler psutil matplotlib snakeviz
 ```
 
+> 💡 **Tip:** Installing `psutil` (included above) makes memory profiling run much faster!
+
 ---
 
 ## 📸 Step-by-Step Guide
@@ -118,6 +120,8 @@ snakeviz prof.out
 
 _(This will open your web browser)_
 
+ℹ️ **Note:** We are using **SnakeViz** instead of KCachegrind because it works better on Windows/Browsers.
+
 > 📸 **Evidence F:** Screenshot the colorful chart in your web browser.
 
 ---
@@ -213,6 +217,12 @@ python -m memory_profiler simul_mem.py
 ```
 
 > 📸 **Evidence J2:** Screenshot the table. The "**Increment**" should be lower (approx **10-15 MiB**).
+
+⚠️ **CRITICAL WARNING:**
+Modern Python versions are more efficient than the textbook's version.
+
+- **Expect a saving of ~3 MiB (not 10 MiB).**
+- This is normal.
 
 ---
 
