@@ -1,7 +1,7 @@
 from random import uniform
 
 class Particle:
-    __slots__ = ('x', 'y', 'v')  # This line is for the second part of the test.
+    ##__slots__ = ('x', 'y', 'v')  # This line is for the second part of the test.
     def __init__(self, x, y, v):
         self.x = x
         self.y = y

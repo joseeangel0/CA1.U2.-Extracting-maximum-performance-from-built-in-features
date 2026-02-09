@@ -1,106 +1,216 @@
-# HPC Assignment - Chapter 2 Profiling
+# 🚀 High Performance Computing: Benchmarking & Profiling Lab Guide
 
-This repository contains the scripts and instructions needed to reproduce the profiling case studies from Chapter 2 of the High Performance Computing course.
+👋 **Hi there!** This kit contains pre-made scripts to save you time. Follow this guide to finish your assignment in **10 minutes** without getting stuck!
 
-**Objective:** Generate three pieces of evidence (screenshots) demonstrating I/O and CPU profiling.
+---
 
-## 📋 Prerequisites
+## 🛠️ Prerequisites
 
-Before starting, install the required Python libraries by running this command in your terminal:
+Open your terminal (**PowerShell** on Windows, **Terminal** on macOS) in this folder and install the required tools:
 
 ```bash
-pip install snakeviz line_profiler requests
+pip install pytest pytest-benchmark line_profiler memory_profiler psutil matplotlib snakeviz
 ```
 
 ---
 
-## 🚀 Part 1: I/O Profiling (Section 2.1)
+## 📸 Step-by-Step Guide
 
-In this part, we analyze network latency using `load.py`.
+### a) 📝 Write Tests and Benchmarks
 
-### Step 1: Run the Profiler
+**Goal:** Show the code structure.
 
-Run the following command. This will execute the script and save the profiling data to a text file named `profile.txt`.
+**Action:**
+Open **simul.py** and **test_simul.py** in your code editor.
 
-```bash
-# Note: This may take 1-2 minutes to run.
-python -m cProfile -s cumulative load.py 01044099999 2021-2021 > profile.txt
-```
-
-### 📸 Evidence Checkpoint 1
-
-1. Open the generated `profile.txt` file.
-2. Look at the top 10-20 lines. You should see a total run time of approximately **129 seconds**.
-3. **Action:** Take a screenshot of these top lines.
-4. **Save using specific filename (if required) or add to your report.**
+> 📸 **Evidence A:** Take a screenshot showing both files open side-by-side.
 
 ---
 
-## 💻 Part 2: CPU Profiling (Section 2.2)
+### b) ⏱️ Time Benchmark
 
-In this part, we analyze the CPU-intensive `distance_cache.py` script.
+**Goal:** Measure total execution time.
 
-### Method A: Line Profiler (Detailed Table)
+**Windows (PowerShell):**
 
-**Requirement:** Ensure the `@profile` decorator is present in `distance_cache.py` (it usually is by default).
-
-### Step 2: Run Kernprof
-
-Run the special line profiler command:
-
-```bash
-kernprof -l -v distance_cache.py
+```powershell
+Measure-Command { python simul.py }
 ```
 
-### 📸 Evidence Checkpoint 2
+**macOS (Terminal):**
 
-1. After the command finishes, a table will be printed in your terminal.
-2. Look for the **% Time** column showing high usage on the mathematical operations within `get_distance`.
-3. **Action:** Take a screenshot of this table in your terminal.
+```bash
+time python simul.py
+```
+
+> 📸 **Evidence B:** Screenshot the output showing **TotalSeconds** (Windows) or the **real** time (macOS).
 
 ---
 
-### Method B: SnakeViz (Visual Chart)
+### c) ⚡ Benchmark using timeit
 
-### ⚠️ CRITICAL WARNING: Before You Proceed
+**Goal:** Measure accurate execution time using Python's module.
 
-**You MUST open `distance_cache.py` and delete (or comment out) the `@profile` decorator.**
-
-If you do not remove `@profile`, the next command will fail with a `NameError`.
-
-```python
-# distance_cache.py
-
-# @profile  <-- DELETE THIS LINE OR ADD A #
-def get_distance(p1, p2):
-    ...
-```
-
-### Step 3: Run Standard Profiler
-
-Once the decorator is removed, run:
+**Command to Run:**
 
 ```bash
-python -m cProfile -o distance_cache.prof distance_cache.py
+python -m timeit -s "from simul import benchmark" "benchmark()"
 ```
 
-### Step 4: Launch SnakeViz
-
-Visualize the results:
-
-```bash
-snakeviz distance_cache.prof
-```
-
-### 📸 Evidence Checkpoint 3
-
-1. A browser window will open showing a colorful "Icicle" chart.
-2. **Action:** Take a screenshot of this chart.
+> 📸 **Evidence C:** Screenshot the result (e.g., "**10 loops, best of 3...**").
 
 ---
 
-## ✅ Checklist
+### d) 📊 Pytest Benchmark
 
-- [ ] Evidence 1: `profile.txt` screenshot (~129s).
-- [ ] Evidence 2: `kernprof` terminal output.
-- [ ] Evidence 3: SnakeViz chart (after removing `@profile`).
+**Goal:** Run statistical benchmarking on the **evolve** function.
+
+**Command to Run:**
+
+```bash
+pytest test_simul.py
+```
+
+> 📸 **Evidence D:** Screenshot the green "**Passed**" table showing **Min/Max/Mean** times.
+
+---
+
+### e) 🐢 Find Bottlenecks with cProfile
+
+**Goal:** Identify the slowest function.
+
+**Windows (PowerShell):**
+
+```powershell
+python -m cProfile -s tottime simul.py | select -first 20
+```
+
+**macOS (Terminal):**
+
+```bash
+python -m cProfile -s tottime simul.py | head -n 20
+```
+
+> 📸 **Evidence E:** Screenshot the table. Look for **evolve** at the very top (highest tottime).
+
+---
+
+### f) 📉 Visualize Profiling Data (SnakeViz)
+
+**Goal:** Visualize the call stack of the Taylor series example.
+
+**Command 1 (Generate Data):**
+
+```bash
+python -m cProfile -o prof.out taylor.py
+```
+
+**Command 2 (Visualize):**
+
+```bash
+snakeviz prof.out
+```
+
+_(This will open your web browser)_
+
+> 📸 **Evidence F:** Screenshot the colorful chart in your web browser.
+
+---
+
+### g) 🔍 Line Profiler
+
+**Goal:** Find exactly which lines of code are slow.
+
+⚠️ **WARNING:** DO NOT edit **simul_line.py**. The `@profile` decorator is already included in this file. Just run the command below. It will take **1-3 minutes** to run.
+
+**Command to Run:**
+
+```bash
+kernprof -l -v simul_line.py
+```
+
+> 📸 **Evidence G:** Screenshot the table showing **% Time**. Note which math lines are taking the most percentage.
+
+---
+
+### h) 🚀 Optimize the Code
+
+**Goal:** Prove the optimization is faster.
+
+ℹ️ **Note:** No editing needed. We are comparing two different files: **simul.py** (slow) vs **simul_opt.py** (fast).
+
+**Windows (PowerShell):**
+
+```powershell
+# Command 1 (Original - SLOW)
+Measure-Command { python simul.py }
+
+# Command 2 (Optimized - FAST)
+Measure-Command { python simul_opt.py }
+```
+
+**macOS (Terminal):**
+
+```bash
+# Command 1 (Original - SLOW)
+time python simul.py
+
+# Command 2 (Optimized - FAST)
+time python simul_opt.py
+```
+
+> 📸 **Evidence H:** Screenshot both results showing the Optimized version is faster.
+
+---
+
+### j) 💾 Memory Profiling
+
+**Goal:** Compare memory usage before and after optimization.
+
+#### Part 1: Baseline
+
+Run the command on **simul_mem.py** exactly as is.
+
+**Command to Run:**
+
+```bash
+python -m memory_profiler simul_mem.py
+```
+
+> 📸 **Evidence J1:** Screenshot the table. Note the "**Increment**" (approx **23 MiB**).
+
+---
+
+> 🛑 **STOP & EDIT:**
+> Now open **simul_mem.py**, find the `Particle` class at the top, and uncomment or add the line `__slots__ = ('x', 'y', 'v')`.
+>
+> **Example:**
+>
+> ```python
+> class Particle:
+>     __slots__ = ('x', 'y', 'v')  # <--- Make sure this line is active!
+>     def __init__(self, x, y, v):
+>         ...
+> ```
+>
+> **Save the file.**
+
+---
+
+#### Part 2: Optimized
+
+Now run the command again to see the memory usage drop.
+
+**Command to Run:**
+
+```bash
+python -m memory_profiler simul_mem.py
+```
+
+> 📸 **Evidence J2:** Screenshot the table. The "**Increment**" should be lower (approx **10-15 MiB**).
+
+---
+
+### 💡 One Final Tip for You Jose Angel only.
+
+Before you zip the files, make sure your **simul_mem.py** does **not** have the `__slots__` line in it yet! Your classmate needs to add it themselves for the "Optimization" step.
