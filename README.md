@@ -17,7 +17,8 @@ Open your terminal (**PowerShell** on Windows, **Terminal** on macOS) in the **`
 pip install pytest pytest-benchmark line_profiler memory_profiler psutil matplotlib snakeviz
 ```
 
-> 💡 **Tip:** Installing `psutil` (included above) makes memory profiling run much faster!
+> 🚀 **Optional Speed Boost:**
+> The memory profiling step can be slow. If you want it to run instantly, install this helper library: `pip install psutil` (If you skip this, the code will still work, just slower.)
 
 ---
 
