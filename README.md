@@ -2,11 +2,16 @@
 
 👋 **Hi there!** This kit contains pre-made scripts to save you time. Follow this guide to finish your assignment in **10 minutes** without getting stuck!
 
+> 📂 **Folder Structure Note:**
+> For organization purposes, all the material for **Task 2** is contained in the **`TASK 2`** folder.
+
 ---
 
 ## 🛠️ Prerequisites
 
-Open your terminal (**PowerShell** on Windows, **Terminal** on macOS) in this folder and install the required tools:
+⚠️ **IMPORTANT:** You must run all commands from inside the **`TASK 2`** folder where the `.py` files are located.
+
+Open your terminal (**PowerShell** on Windows, **Terminal** on macOS) in the **`TASK 2`** folder and install the required tools:
 
 ```bash
 pip install pytest pytest-benchmark line_profiler memory_profiler psutil matplotlib snakeviz
